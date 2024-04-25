@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Bai_Jamjuree } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const BaiJamjuree = Bai_Jamjuree({ subsets: ["latin"], weight: ["400"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,8 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="forest">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" data-theme="forest" className="h-screen">
+      <body className={BaiJamjuree.className}>
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }

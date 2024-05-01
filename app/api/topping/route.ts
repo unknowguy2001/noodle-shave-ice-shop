@@ -1,4 +1,4 @@
-import { toppingSchema } from "@/app/validataion/topping.schema";
+import { toppingSchema } from "@/app/api/validataion/topping.schema";
 import { createConnection } from "../lib/db";
 import Topping from "../models/topping.schema";
 import { NextRequest, NextResponse } from "next/server";

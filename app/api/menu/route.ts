@@ -1,6 +1,7 @@
 import { createConnection } from "@/app/api/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import Menu from "@/app/api/models/menu.schema";
+import { menuSchema } from "@/app/api/validataion/menu.schema";
 
 export async function GET() {
   await createConnection();
@@ -18,12 +19,13 @@ export async function POST(req: NextRequest) {
   await createConnection();
 
   try {
-    const menus = await Menu.find({});
+    const { MenuValue } = await req.json();
 
-    const { MenuValue }: { MenuValue: MenuValue } = await req.json();
-    //* implement zod for validate data
+    const data = new Menu(menuSchema.parse(MenuValue));
 
-    return NextResponse.json({}, { status: 200 });
+    const result = await data.save();
+
+    return NextResponse.json({ result }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message });
   }

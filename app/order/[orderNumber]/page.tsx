@@ -1,6 +1,6 @@
 import Image from "next/image";
 import porkIcon from "@/public/pork.png";
-const Order = ({ params }: { params: { orderNumber: number } }) => {
+const Order = ({ params }: { params: { orderNumber: string } }) => {
   return (
     <div className="h-screen">
       <img src="https://placehold.co/375x250" alt="Menu Image" />

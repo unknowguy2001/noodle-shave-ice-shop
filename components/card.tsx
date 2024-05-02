@@ -1,10 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { v4 } from "uuid";
 
 const Card = () => {
-  const [data, setData] = useState<
+  const [menu, setMenu] = useState<
     { name: string; description: string; price: number; imgae: string }[]
   >([]);
+  const [orderNumber, setOrderNumber] = useState("");
+
+  const generateOrder = () => {
+    const today = new Date().toLocaleDateString();
+    const uuid = v4();
+    const id = "/order/" + today.split("/").join() + uuid;
+    setOrderNumber(id);
+    console.log("counter");
+    return `/order/${id}`;
+  };
 
   const fetchData = async () => {
     const response = await fetch("/api/menu");
@@ -17,13 +29,13 @@ const Card = () => {
     (async function () {
       const products = await fetchData();
 
-      setData(products);
+      setMenu(products);
     })();
   }, []);
 
   return (
     <div className="card card-side bg-base-100 shadow-xl">
-      {data.map((product) => (
+      {menu.map((product) => (
         <>
           <figure className="pl-8">
             <img
@@ -35,8 +47,16 @@ const Card = () => {
           <div className="card-body">
             <h2 className="card-title">{product.name}</h2>
             <p>{product.description}</p>
-            <div className="card-actions justify-start items-center">
-              <button className="btn btn-primary">เพิ่มออเดอร์</button>
+            <p>
+              ราคา: <span>{product.price}฿</span>
+            </p>
+            <div className="card-actions justify-center items-center">
+              <Link
+                href={orderNumber == "" ? generateOrder() : orderNumber}
+                className="btn btn-primary"
+              >
+                เพิ่มออเดอร์
+              </Link>
             </div>
           </div>
         </>

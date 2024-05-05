@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createConnection } from "../../lib/db";
 import admin from "../../models/admin.schema";
 import argon2 from "argon2";
-import jwt from "jsonwebtoken";
+import * as jose from "jose";
 import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
@@ -26,15 +26,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token = jwt.sign(
-      { exp: Math.floor(Date.now() / 1000) + 60 * 60, id: isAppend._id },
-      process.env.PRIVATE_KEY!
-    );
+    const secret = new TextEncoder().encode(process.env.PRIVATE_KEY!);
+    const alg = process.env.ALG!;
 
-    const refreshToken = jwt.sign(
-      { exp: Math.floor(Date.now() / 1000) + 60 * 60 * 8, id: isAppend._id },
-      process.env.PRIVATE_KEY!
-    );
+    const token = await new jose.SignJWT({ id: isAppend._id })
+      .setProtectedHeader({ alg })
+      .setExpirationTime("1h")
+      .sign(secret);
+
+    const refreshToken = await new jose.SignJWT({ id: isAppend._id })
+      .setProtectedHeader({ alg })
+      .setExpirationTime("15d")
+      .sign(secret);
 
     cookies().set("token", token);
     cookies().set("refresh-token", refreshToken);

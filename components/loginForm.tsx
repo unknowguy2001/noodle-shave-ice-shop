@@ -1,18 +1,54 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-export const LoginForm = () => {
-  const [data, setData] = useState([
-    {
-      username: "",
-      password: "",
-    },
-  ]);
+interface MyEventTarget extends EventTarget {
+  name: string;
+  value: string;
+}
 
-  useEffect(() => {}, [data]);
+export const LoginForm = () => {
+  const router = useRouter();
+  const [data, setData] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleInput = async (e: React.FormEvent) => {
+    const target = e.target as MyEventTarget;
+
+    setData({
+      ...data,
+      [target.name]: target.value,
+      [target.name]: target.value,
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const urlToFetch = "/api/auth/login";
+
+    let response = await fetch(urlToFetch, {
+      method: "POST",
+      body: JSON.stringify({
+        username: data.username,
+        password: data.password,
+      }),
+    });
+
+    if (response.ok) {
+      router.push("dashboard");
+      console.log("ok");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 justify-center items-center h-[calc(100dvh-72px)]">
-      <form action="" className="flex flex-col items-center gap-4">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center gap-4"
+      >
         <label className="input input-bordered flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +58,13 @@ export const LoginForm = () => {
           >
             <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
           </svg>
-          <input type="text" className="grow" placeholder="Username" />
+          <input
+            type="text"
+            className="grow"
+            placeholder="Username"
+            name="username"
+            onChange={handleInput}
+          />
         </label>
         <label className="input input-bordered flex items-center gap-2">
           <svg
@@ -37,9 +79,21 @@ export const LoginForm = () => {
               clipRule="evenodd"
             />
           </svg>
-          <input type="password" className="grow" placeholder="*******" />
+          <input
+            type="password"
+            className="grow"
+            placeholder="*******"
+            name="password"
+            onChange={handleInput}
+          />
         </label>
-        <button className="btn btn-xs btn-primary sm:btn-sm md:btn-md lg:btn-lg">เข้าสู่ระบบ</button>
+        <button
+          className="btn btn-xs btn-primary sm:btn-sm md:btn-md lg:btn-lg"
+          type="submit"
+          onClick={() => router.push("/dashboard")}
+        >
+          เข้าสู่ระบบ
+        </button>
       </form>
     </div>
   );

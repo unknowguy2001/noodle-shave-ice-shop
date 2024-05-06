@@ -1,4 +1,5 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -38,7 +39,7 @@ export const LoginForm = () => {
     });
 
     if (response.ok) {
-      router.push("dashboard");
+      router.push("/dashboard");
       console.log("ok");
     }
   };
@@ -90,7 +91,6 @@ export const LoginForm = () => {
         <button
           className="btn btn-xs btn-primary sm:btn-sm md:btn-md lg:btn-lg"
           type="submit"
-          onClick={() => router.push("/dashboard")}
         >
           เข้าสู่ระบบ
         </button>

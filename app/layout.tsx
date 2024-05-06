@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="forest" className="h-screen">
-      <body className={BaiJamjuree.className}>
+      <body className={BaiJamjuree.className + " h-full overflow-hidden"}>
         <Navbar />
         {children}
       </body>

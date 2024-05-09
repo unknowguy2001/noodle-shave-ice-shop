@@ -1,4 +1,4 @@
-import { createConnection } from "../lib/db";
+import { createConnection } from "../../../lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import Order from "../models/order.schema";
 import { orderSchema } from "../validataion/order.schema";

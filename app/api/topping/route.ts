@@ -1,5 +1,5 @@
 import { toppingSchema } from "@/app/api/validataion/topping.schema";
-import { createConnection } from "../lib/db";
+import { createConnection } from "../../../lib/db";
 import Topping from "../models/topping.schema";
 import { NextRequest, NextResponse } from "next/server";
 

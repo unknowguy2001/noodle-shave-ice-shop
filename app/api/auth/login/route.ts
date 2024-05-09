@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createConnection } from "../../lib/db";
+import { createConnection } from "../../../../lib/db";
 import admin from "../../models/admin.schema";
 import argon2 from "argon2";
 import * as jose from "jose";

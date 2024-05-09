@@ -39,7 +39,7 @@ export const LoginForm = () => {
     });
 
     if (response.ok) {
-      router.push("/dashboard");
+      router.push("/admin/dashboard");
       console.log("ok");
     }
   };

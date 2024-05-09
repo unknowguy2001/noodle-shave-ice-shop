@@ -1,26 +1,26 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { v4 } from "uuid";
+import { useStore } from "@nanostores/react";
+import { $orderDetail } from "@/store/orderId";
 
 const Card = () => {
+  const testOrder = useStore($orderDetail);
   const [menu, setMenu] = useState<
-    { name: string; description: string; price: number; imgae: string }[]
+    {
+      _id: string;
+      name: string;
+      description: string;
+      price: number;
+      image: string;
+    }[]
   >([]);
-  const [orderNumber, setOrderNumber] = useState("");
-
-  const generateOrder = () => {
-    const today = new Date().toLocaleDateString();
-    const uuid = v4();
-    const id = "/order/" + today.split("/").join() + uuid;
-    setOrderNumber(id);
-    console.log("counter");
-    return `/order/${id}`;
-  };
 
   const fetchData = async () => {
     const response = await fetch("/api/menu");
     const products = await response.json();
+    console.log(testOrder);
 
     return products;
   };
@@ -34,12 +34,14 @@ const Card = () => {
   }, []);
 
   return (
-    <div className="card card-side bg-base-100 shadow-xl">
+    <div className="flex flex-col overflow-auto">
       {menu.map((product) => (
-        <>
-          <figure className="pl-8">
+        <div key={product._id}>
+          <figure className="px-8">
             <img
-              src={product.imgae || "https://placehold.co/320x320"}
+              src={
+                "/uploads/" + product.image || "https://placehold.co/320x320"
+              }
               alt={product.name}
               className="rounded"
             />
@@ -50,16 +52,16 @@ const Card = () => {
             <p>
               ราคา: <span>{product.price}฿</span>
             </p>
-            <div className="card-actions justify-center items-center">
+            <div className="card-actions justify-end items-center">
               <Link
-                href={orderNumber == "" ? generateOrder() : orderNumber}
+                href={`/menu-details/${product._id}`}
                 className="btn btn-primary"
               >
                 เพิ่มออเดอร์
               </Link>
             </div>
           </div>
-        </>
+        </div>
       ))}
     </div>
   );

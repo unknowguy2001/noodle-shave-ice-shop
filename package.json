@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nanostores/react": "^0.7.2",
     "argon2": "^0.40.1",
     "jose": "^5.2.4",
     "mongoose": "^8.3.2",
@@ -16,6 +17,7 @@
     "next": "14.2.2",
     "react": "^18",
     "react-dom": "^18",
+    "socket.io": "^4.7.5",
     "sonner": "^1.4.41",
     "uuid": "^9.0.1",
     "zod": "^3.23.5"

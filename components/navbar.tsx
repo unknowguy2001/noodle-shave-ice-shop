@@ -20,29 +20,40 @@ const Navbar = () => {
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">🍜 เตี๋ยว-เตี๋ยว</a>
+        <Link href="/" className="btn btn-ghost text-xl">
+          🍜 เตี๋ยว-เตี๋ยว
+        </Link>
       </div>
       <div className="flex-none">
         <div className="dropdown dropdown-end">
-          {pathname == "/dashboard" ? (
-            <button onClick={() => logout()}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="lucide lucide-log-out"
-              >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" x2="9" y1="12" y2="12" />
-              </svg>
-            </button>
+          {pathname == "/admin/dashboard" || pathname == "/admin/manager" ? (
+            <>
+              <div className="flex gap-2">
+                {pathname != "/admin/manager" ? (
+                  <Link href="/admin/manager" className="btn btn-xs btn-info">
+                    การจัดการ
+                  </Link>
+                ) : null}
+                <button onClick={() => logout()}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-log-out"
+                  >
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" x2="9" y1="12" y2="12" />
+                  </svg>
+                </button>
+              </div>
+            </>
           ) : pathname != "/login" ? (
             <>
               <div

@@ -9,9 +9,9 @@ export async function GET() {
   try {
     const toppings = await Topping.find({});
 
-    return NextResponse.json(toppings, { status: 200 });
+    return NextResponse.json({ success: true, toppings }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json({ success: false, error }, { status: 500 });
   }
 }
 

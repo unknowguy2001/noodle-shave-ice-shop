@@ -10,7 +10,7 @@ export async function GET() {
   try {
     const menus = await Menu.find({});
 
-    return NextResponse.json({ success: false, menus }, { status: 200 });
+    return NextResponse.json({ success: true, menus }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       {

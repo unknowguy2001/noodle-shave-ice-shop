@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import MenuForm from "@/components/menuForm";
+import MenuForm from "@/app/admin/menu/_components/menuForm";
 
 const adminMenu = () => {
   return (

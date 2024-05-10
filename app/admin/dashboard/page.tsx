@@ -1,6 +1,6 @@
 import React from "react";
-import { AdminGraph } from "@/components/adminGraph";
-import { AdminOrders } from "@/components/adminOrders";
+import { AdminGraph } from "@/app/admin/dashboard/_components/adminGraph";
+import { AdminOrders } from "@/app/admin/dashboard/_components/adminOrders";
 
 const Dashboard = () => {
   return (

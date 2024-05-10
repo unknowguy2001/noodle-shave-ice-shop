@@ -1,4 +1,4 @@
-import ToppingForm from "@/components/toppingForm";
+import ToppingForm from "@/app/admin/topping/_components/toppingForm";
 import React from "react";
 import Link from "next/link";
 

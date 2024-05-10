@@ -10,9 +10,15 @@ export async function GET() {
   try {
     const menus = await Menu.find({});
 
-    return NextResponse.json(menus);
+    return NextResponse.json({ success: false, menus }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message });
+    return NextResponse.json(
+      {
+        success: false,
+        error: (error as Error).message,
+      },
+      { status: 500 }
+    );
   }
 }
 

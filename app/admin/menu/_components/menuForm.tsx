@@ -2,9 +2,21 @@
 
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-const MenuForm = () => {
+const MenuForm = ({ id }: { id?: string }) => {
+  const path = usePathname();
+  const router = useRouter();
+  const [menu, setMenu] = useState<MenuValue>({
+    _id: "",
+    name: "",
+    description: "",
+    image: "",
+    price: 0,
+    toppings: [],
+  });
+
   const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([]);
   const [toppings, setToppings] = useState<
     {
@@ -16,36 +28,73 @@ const MenuForm = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const router = useRouter();
-    const formData = new FormData();
 
-    const name = (e.target as HTMLFormElement).nameInput.value;
-    const description = (e.target as HTMLFormElement).descriptionInput.value;
-    const price = (e.target as HTMLFormElement).priceInput.value;
-    const file = (e.target as HTMLFormElement).fileUpload.files[0];
+    let name = (e.target as HTMLFormElement).nameInput.value;
+    let description = (e.target as HTMLFormElement).descriptionInput.value;
+    let price = (e.target as HTMLFormElement).priceInput.value;
+    let file = (e.target as HTMLFormElement).fileUpload.files[0];
 
     const isEmptyInput = name && description && price && file;
-    if (isEmptyInput) {
+    if (isEmptyInput && path == "/admin/menu") {
+      const formData = new FormData();
+
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
       formData.append("toppings", JSON.stringify(selectedCheckbox));
       formData.append("file", file);
+
+      const response = await fetch("/api/menu", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("Upload ok : " + result.name);
+        router.refresh();
+      } else {
+        toast.error("Upload failed");
+        router.refresh();
+      }
     }
 
-    const response = await fetch("/api/menu", {
-      method: "POST",
-      body: formData,
-    });
+    if (path == `/admin/menu/edit/${id}`) {
+      const formData = new FormData();
+      if (!name) name = menu.name;
+      if (!description) description = menu.description;
+      if (!price) price = menu.price;
+      if (selectedCheckbox.length != 0) {
+        formData.append("toppings", JSON.stringify(selectedCheckbox));
+      } else {
+        formData.append(
+          "toppings",
+          JSON.stringify(menu.toppings.map((topping) => topping.id))
+        );
+      }
 
-    const result = await response.json();
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("price", price);
+      console.log(selectedCheckbox);
 
-    if (result.success) {
-      toast.success("Upload ok : " + result.name);
-      router.reload();
-    } else {
-      toast.error("Upload failed");
-      router.reload();
+      if (file) formData.append("file", file);
+
+      const rawResponse = await fetch(`/api/menu/${id}`, {
+        method: "PATCH",
+        body: formData,
+      });
+
+      const response = await rawResponse.json();
+
+      if (response.success) {
+        toast.success("อัพเดทข้อมูลสำเร็จ");
+        router.refresh();
+      } else {
+        toast.error("อัพเดทข้อมูลไม่สำเร็จ โปรดลองอีกครั้งในภายหลัง");
+        router.refresh();
+      }
     }
   };
 
@@ -63,8 +112,26 @@ const MenuForm = () => {
     (async function () {
       const ToppingDetail = await fetchTopping();
 
-      setToppings(ToppingDetail);
+      setToppings(ToppingDetail.toppings);
     })();
+  }, []);
+  useEffect(() => {
+    if (path == `/admin/menu/edit/${id}`) {
+      (async function () {
+        const rawResponse = await fetch(`/api/menu/${id}`, {
+          method: "GET",
+        });
+
+        const response = await rawResponse.json();
+
+        if (response.success) {
+          setMenu(response.response);
+          console.log(response.response);
+        } else {
+          toast.error("ไม่สามารถดึงข้อมูลเมนูที่คุณต้องการได้");
+        }
+      })();
+    }
   }, []);
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +154,7 @@ const MenuForm = () => {
           placeholder="Type here"
           className="input input-bordered input-info input-md w-full max-w-xs"
           name="nameInput"
+          defaultValue={menu.name != "" ? menu.name : ""}
         />
       </div>
 
@@ -97,6 +165,7 @@ const MenuForm = () => {
           placeholder="Type here"
           className="input input-bordered input-info input-md w-full max-w-xs"
           name="descriptionInput"
+          defaultValue={menu.description != "" ? menu.description : ""}
         />
       </div>
       <div className="flex flex-col items-center gap-2">
@@ -106,6 +175,7 @@ const MenuForm = () => {
           placeholder="Type here"
           className="input input-bordered input-info input-md w-full max-w-xs"
           name="priceInput"
+          defaultValue={menu.price != 0 ? menu.price.toString() : 0}
         />
       </div>
       <div className="flex flex-col items-center gap-2">
@@ -124,7 +194,13 @@ const MenuForm = () => {
               type="checkbox"
               name={e.name}
               value={e._id}
-              checked={selectedCheckbox.includes(e._id)}
+              defaultChecked={
+                path == "/admin/menu"
+                  ? selectedCheckbox.includes(e._id)
+                  : menu.toppings
+                      .map((topping) => topping.name == e.name)
+                      .every((value) => value)
+              }
               onChange={handleCheckboxChange}
             />
             <div></div>
@@ -132,7 +208,7 @@ const MenuForm = () => {
         ))}
       </div>
       <button type="submit" className="btn btn-success">
-        เพิ่มเมนู
+        {path == "/admin/menu" ? "เพิ่มเมนู" : "อัพเดทเมนู"}
       </button>
     </form>
   );

@@ -14,7 +14,7 @@ const adminManager = () => {
         <Link href="/admin/menu" className="btn btn-warning btn-sm">
           เพิ่มเมนู
         </Link>
-        <Link href="" className="btn btn-warning btn-sm">
+        <Link href="/admin/menu/edit" className="btn btn-warning btn-sm">
           จัดการเมนูเมนู
         </Link>
       </div>

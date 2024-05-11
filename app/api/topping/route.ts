@@ -1,7 +1,8 @@
-import { toppingSchema } from "@/app/api/validataion/topping.schema";
 import { createConnection } from "../../../lib/db";
 import Topping from "../models/topping.schema";
 import { NextRequest, NextResponse } from "next/server";
+import path from "path";
+import fs from "fs";
 
 export async function GET() {
   await createConnection();
@@ -15,20 +16,53 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
-  await createConnection();
+const UPLOAD_DIR = path.resolve(process.env.ROOT_PATH ?? "", "public/uploads");
 
+export const POST = async (req: NextRequest) => {
   try {
-    const { ToppingValue } = await req.json();
+    await createConnection();
 
-    console.log(ToppingValue);
+    const formData = await req.formData();
+    const body = Object.fromEntries(formData);
+    const file = (body.file as Blob) || null;
 
-    const data = new Topping(toppingSchema.parse(ToppingValue));
+    const name = body.name;
+    const icon = (body.file as File).name;
 
-    const result = await data.save();
+    if (file) {
+      console.log(file);
+      const buffer = Buffer.from(await file.arrayBuffer());
 
-    return NextResponse.json({ result }, { status: 200 });
+      if (!fs.existsSync(UPLOAD_DIR)) {
+        fs.mkdirSync(UPLOAD_DIR);
+      }
+
+      fs.writeFileSync(
+        path.resolve(UPLOAD_DIR, (body.file as File).name),
+        buffer
+      );
+    } else {
+      return NextResponse.json(
+        {
+          success: false,
+        },
+        { status: 500 }
+      );
+    }
+    const newTopping = new Topping({
+      name,
+      icon,
+    });
+
+    const result = newTopping.save();
+    return NextResponse.json(
+      { success: true, name: (body.file as File).name },
+      { status: 200 }
+    );
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message });
+    return NextResponse.json({
+      success: false,
+      error: (error as Error).message,
+    });
   }
-}
+};

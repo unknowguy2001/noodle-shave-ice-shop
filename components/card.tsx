@@ -2,25 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useStore } from "@nanostores/react";
-import { $orderDetail } from "@/store/orderId";
 
 const Card = () => {
-  const testOrder = useStore($orderDetail);
-  const [menu, setMenu] = useState<
+  const [menu, setMenu] = useState<MenuValue[]>([
     {
-      _id: string;
-      name: string;
-      description: string;
-      price: number;
-      image: string;
-    }[]
-  >([]);
+      _id: "",
+      name: "",
+      image: "",
+      toppings: [],
+      price: 0,
+      description: "",
+    },
+  ]);
 
   const fetchData = async () => {
     const response = await fetch("/api/menu");
     const products = await response.json();
-    console.log(testOrder);
 
     return products;
   };
@@ -29,10 +26,10 @@ const Card = () => {
     (async function () {
       const products = await fetchData();
 
-      setMenu(products);
+      setMenu(products.menus);
     })();
   }, []);
-
+  console.log(menu);
   return (
     <div className="flex flex-col overflow-auto">
       {menu.map((product) => (
@@ -50,7 +47,7 @@ const Card = () => {
             <h2 className="card-title">{product.name}</h2>
             <p>{product.description}</p>
             <p>
-              ราคา: <span>{product.price}฿</span>
+              ราคา: <span>{product.price.toString()}฿</span>
             </p>
             <div className="card-actions justify-end items-center">
               <Link

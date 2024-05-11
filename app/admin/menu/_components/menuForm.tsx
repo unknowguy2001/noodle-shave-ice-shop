@@ -77,7 +77,6 @@ const MenuForm = ({ id }: { id?: string }) => {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
-      console.log(selectedCheckbox);
 
       if (file) formData.append("file", file);
 
@@ -113,25 +112,24 @@ const MenuForm = ({ id }: { id?: string }) => {
       const ToppingDetail = await fetchTopping();
 
       setToppings(ToppingDetail.toppings);
+
+      if (path == `/admin/menu/edit/${id}`) {
+        (async function () {
+          const rawResponse = await fetch(`/api/menu/${id}`, {
+            method: "GET",
+          });
+
+          const response = await rawResponse.json();
+
+          if (response.success) {
+            setMenu(response.response);
+            console.log(response.response);
+          } else {
+            toast.error("ไม่สามารถดึงข้อมูลเมนูที่คุณต้องการได้");
+          }
+        })();
+      }
     })();
-  }, []);
-  useEffect(() => {
-    if (path == `/admin/menu/edit/${id}`) {
-      (async function () {
-        const rawResponse = await fetch(`/api/menu/${id}`, {
-          method: "GET",
-        });
-
-        const response = await rawResponse.json();
-
-        if (response.success) {
-          setMenu(response.response);
-          console.log(response.response);
-        } else {
-          toast.error("ไม่สามารถดึงข้อมูลเมนูที่คุณต้องการได้");
-        }
-      })();
-    }
   }, []);
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +137,6 @@ const MenuForm = ({ id }: { id?: string }) => {
 
     if (checked) {
       setSelectedCheckbox([...selectedCheckbox, value]);
-      console.log(value);
     } else {
       setSelectedCheckbox(selectedCheckbox.filter((item) => item !== value));
     }
@@ -175,7 +172,7 @@ const MenuForm = ({ id }: { id?: string }) => {
           placeholder="Type here"
           className="input input-bordered input-info input-md w-full max-w-xs"
           name="priceInput"
-          defaultValue={menu.price != 0 ? menu.price.toString() : 0}
+          defaultValue={menu.price != 0 ? menu.price.toString() : ""}
         />
       </div>
       <div className="flex flex-col items-center gap-2">

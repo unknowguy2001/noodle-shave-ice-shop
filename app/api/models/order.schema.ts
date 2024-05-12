@@ -4,12 +4,10 @@ const orderSchema = new Schema({
   orderNumber: { type: String, required: true },
   customerName: { type: String, required: true },
   menus: [
-    [
-      {
-        menu: { type: Types.ObjectId, ref: "Menu" },
-        toppings: [{ topping: { type: Types.ObjectId, ref: "Topping" } }],
-      },
-    ],
+    {
+      menu: { type: Types.ObjectId, ref: "Menu" },
+      toppings: [{ type: Types.ObjectId, ref: "Topping" }],
+    },
   ],
 });
 

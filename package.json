@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
+  "type": "module",
   "dependencies": {
     "@nanostores/react": "^0.7.2",
     "argon2": "^0.40.1",
@@ -18,6 +19,7 @@
     "react": "^18",
     "react-dom": "^18",
     "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "sonner": "^1.4.41",
     "uuid": "^9.0.1",
     "zod": "^3.23.5"

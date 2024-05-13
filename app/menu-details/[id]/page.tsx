@@ -31,7 +31,23 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
 
   const [inputValues, setInputValues] = useState<ButtonValue[]>([]);
 
+  const isDuplicateInputValues = (value: ButtonValue) => {
+    const index = inputValues.findIndex((val) => {
+      return val._id == value._id;
+    });
+    return index;
+  };
+
   const handleInput = async (value: ButtonValue) => {
+    const index = isDuplicateInputValues(value);
+
+    if (index != -1) {
+      const temp = [...inputValues];
+      temp.splice(index, 1);
+
+      setInputValues(temp);
+      return;
+    }
     setInputValues([...inputValues, value]);
   };
 
@@ -119,7 +135,10 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
             onSubmit={generateOrder}
           >
             {menu.toppings.map((e) => (
-              <div className="flex justify-between px-8 items-center">
+              <div
+                key={e._id}
+                className="flex justify-between px-8 items-center"
+              >
                 <Image
                   src={"/uploads/" + e.icon}
                   alt={e.name}
@@ -127,11 +146,16 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
                   width="50"
                 ></Image>
                 <button
-                  className="btn btn-outline btn-success"
+                  className={
+                    isDuplicateInputValues(e) != -1
+                      ? "btn btn-outline btn-error"
+                      : "btn btn-outline btn-success"
+                  }
                   onClick={async () => await handleInput({ _id: e._id })}
                   type="button"
                 >
-                  ใส่{e.name}
+                  {isDuplicateInputValues(e) != -1 ? "ไม่ใส่" : "ใส่"}
+                  {e.name}
                 </button>
               </div>
             ))}

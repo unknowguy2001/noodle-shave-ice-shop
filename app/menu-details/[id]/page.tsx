@@ -3,14 +3,20 @@ import Image from "next/image";
 import { v4 } from "uuid";
 import { $orderDetail, addOrder } from "@/store/orderId";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useStore } from "@nanostores/react";
+import { $totalPrice, setTotalPrice } from "@/store/totalPrice";
+
+interface ButtonValue {
+  _id: string;
+}
 
 const MenuDetails = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const [menu, setMenu] = useState<{
     name: string;
     image: string;
-    toppings: { name: string; icon: string; price: number }[];
+    toppings: { _id: string; name: string; icon: string; price: number }[];
     price: number;
     description: string;
   }>({
@@ -21,46 +27,67 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
     description: "",
   });
 
-  const generateOrder = async () => {
-    const oldOrder = $orderDetail.get();
+  const oldOrder = useStore($orderDetail);
 
+  const [inputValues, setInputValues] = useState<ButtonValue[]>([]);
+
+  const handleInput = async (value: ButtonValue) => {
+    setInputValues([...inputValues, value]);
+  };
+
+  const generateOrder = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const today = new Date().toLocaleDateString();
     const uuid = v4();
     const id = "/order/" + today.split("/").join() + uuid;
+    const order = { ...oldOrder };
 
     const newOrder: OrderValue = {
-      customerName: "test1",
+      customerName: "",
       orderNumber: id,
       menus: [
-        [
-          {
-            menu: params.id,
-            toppings: [{ toppings: "" }],
-          },
-        ],
+        {
+          menu: params.id,
+          toppings: [],
+        },
       ],
     };
 
-    if (oldOrder.orderNumber === "") {
-      addOrder(newOrder);
+    for (let i = 0; i < inputValues.length; i++) {
+      if (!newOrder.menus[0].toppings.includes(inputValues[i]._id)) {
+        newOrder.menus[0].toppings.push(inputValues[i]._id);
+      }
     }
 
-    if (newOrder.customerName !== oldOrder.customerName) {
-      oldOrder.customerName = newOrder.customerName;
-    }
+    if (newOrder.menus.length > 0) {
+      if (order.orderNumber == "") order.orderNumber = newOrder.orderNumber;
+      order.menus.push(newOrder.menus[0]);
 
-    if (newOrder.menus[0].length != 0) {
-      oldOrder.menus.push(newOrder.menus[0]);
-    }
+      addOrder(order);
+      const menuId = order.menus.findLast((cur) => {
+        return cur.menu;
+      });
 
-    addOrder(oldOrder);
+      const rawResponse = await fetch(`/api/menu/${menuId!.menu}`, {
+        method: "GET",
+      });
+
+      const response = await rawResponse.json();
+
+      if (response.success) {
+        console.log("Hey");
+        setTotalPrice(response.response.price + $totalPrice.get());
+      } else {
+        console.log("Can't fetch data!");
+      }
+    }
+    return;
   };
 
   const fecthMenuDetail = async () => {
     const response = await fetch(`/api/menu/${params.id}`);
     const menuDetial = await response.json();
 
-    console.log(menuDetial);
     return menuDetial;
   };
 
@@ -68,7 +95,7 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
     (async function () {
       const menuDetails = await fecthMenuDetail();
 
-      setMenu(menuDetails);
+      setMenu(menuDetails.response);
     })();
   }, []);
 
@@ -87,7 +114,10 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
               <p className="font-semibold">{menu.price}฿</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-2 pt-4">
+          <form
+            className="grid grid-cols-1 gap-2 pt-4"
+            onSubmit={generateOrder}
+          >
             {menu.toppings.map((e) => (
               <div className="flex justify-between px-8 items-center">
                 <Image
@@ -96,21 +126,19 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
                   height="50"
                   width="50"
                 ></Image>
-                <button className="btn btn-outline btn-success">
+                <button
+                  className="btn btn-outline btn-success"
+                  onClick={async () => await handleInput({ _id: e._id })}
+                  type="button"
+                >
                   ใส่{e.name}
                 </button>
               </div>
             ))}
-            <button
-              className="btn btn-success"
-              onClick={async () => {
-                await generateOrder();
-                router.push("/");
-              }}
-            >
+            <button className="btn btn-success" type="submit">
               เพิ่มไปยังออเดอร์
             </button>
-          </div>
+          </form>
         </div>
       </>
     </div>

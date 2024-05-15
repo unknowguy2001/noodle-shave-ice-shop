@@ -7,19 +7,16 @@ import { FormEvent, useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $totalPrice, setTotalPrice } from "@/store/totalPrice";
 
-interface ButtonValue {
-  _id: string;
-}
-
 const MenuDetails = ({ params }: { params: { id: string } }) => {
-  const router = useRouter();
   const [menu, setMenu] = useState<{
+    _id: string;
     name: string;
     image: string;
     toppings: { _id: string; name: string; icon: string; price: number }[];
     price: number;
     description: string;
   }>({
+    _id: "",
     name: "",
     image: "",
     toppings: [],
@@ -29,26 +26,40 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
 
   const oldOrder = useStore($orderDetail);
 
-  const [inputValues, setInputValues] = useState<ButtonValue[]>([]);
+  const [toppingValues, setToppingValues] = useState<
+    {
+      _id: string;
+      name: string;
+      price: number;
+    }[]
+  >([]);
 
-  const isDuplicateInputValues = (value: ButtonValue) => {
-    const index = inputValues.findIndex((val) => {
+  const isDuplicateInputValues = (value: {
+    _id: string;
+    name: string;
+    price: number;
+  }) => {
+    const index = toppingValues.findIndex((val) => {
       return val._id == value._id;
     });
     return index;
   };
 
-  const handleInput = async (value: ButtonValue) => {
+  const handleTopping = async (value: {
+    _id: string;
+    name: string;
+    price: number;
+  }) => {
     const index = isDuplicateInputValues(value);
 
     if (index != -1) {
-      const temp = [...inputValues];
+      const temp = [...toppingValues];
       temp.splice(index, 1);
 
-      setInputValues(temp);
+      setToppingValues(temp);
       return;
     }
-    setInputValues([...inputValues, value]);
+    setToppingValues([...toppingValues, value]);
   };
 
   const generateOrder = async (e: FormEvent<HTMLFormElement>) => {
@@ -58,44 +69,27 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
     const id = "/order/" + today.split("/").join() + uuid;
     const order = { ...oldOrder };
 
-    const newOrder: OrderValue = {
-      customerName: "",
+    const newOrder: OrderDetails = {
       orderNumber: id,
       menus: [
         {
-          menu: params.id,
-          toppings: [],
+          _id: menu._id,
+          name: menu.name,
+          price: menu.price,
+          selectedToppings: toppingValues,
         },
       ],
     };
 
-    for (let i = 0; i < inputValues.length; i++) {
-      if (!newOrder.menus[0].toppings.includes(inputValues[i]._id)) {
-        newOrder.menus[0].toppings.push(inputValues[i]._id);
-      }
-    }
+    for (let i = 0; i < toppingValues.length; i++) {}
 
     if (newOrder.menus.length > 0) {
       if (order.orderNumber == "") order.orderNumber = newOrder.orderNumber;
       order.menus.push(newOrder.menus[0]);
 
       addOrder(order);
-      const menuId = order.menus.findLast((cur) => {
-        return cur.menu;
-      });
 
-      const rawResponse = await fetch(`/api/menu/${menuId!.menu}`, {
-        method: "GET",
-      });
-
-      const response = await rawResponse.json();
-
-      if (response.success) {
-        console.log("Hey");
-        setTotalPrice(response.response.price + $totalPrice.get());
-      } else {
-        console.log("Can't fetch data!");
-      }
+      setTotalPrice(newOrder.menus[0].price + $totalPrice.get());
     }
     return;
   };
@@ -151,7 +145,7 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
                       ? "btn btn-outline btn-error"
                       : "btn btn-outline btn-success"
                   }
-                  onClick={async () => await handleInput({ _id: e._id })}
+                  onClick={async () => await handleTopping(e)}
                   type="button"
                 >
                   {isDuplicateInputValues(e) != -1 ? "ไม่ใส่" : "ใส่"}

@@ -125,7 +125,7 @@ const ToppingForm = ({ id }: { id?: string }) => {
           className="input input-bordered input-info input-md w-full max-w-xs"
           name="priceInput"
           defaultValue={
-            toppingValue.price !== 0 ? toppingValue.price?.toString() : ""
+            toppingValue.price ? toppingValue.price?.toString() : 0
           }
         />
       </div>

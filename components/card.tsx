@@ -29,9 +29,8 @@ const Card = () => {
       setMenu(products.menus);
     })();
   }, []);
-  console.log(menu);
   return (
-    <div className="flex flex-col overflow-auto">
+    <div className="flex flex-col ">
       {menu.map((product) => (
         <div key={product._id}>
           <figure className="px-8">

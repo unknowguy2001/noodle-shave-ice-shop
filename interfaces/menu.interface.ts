@@ -7,6 +7,6 @@ interface MenuValue {
     name: string;
     icon: string;
   }>;
-  price: Number;
+  price: number;
   description: string;
 }

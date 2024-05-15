@@ -13,12 +13,29 @@ export function addOrder(order: OrderDetails) {
 }
 
 export function removeMenu(index: number) {
-  let copyOrders: OrderDetails = { ...$orderDetail.get() };
+  let copyOrder: OrderDetails = { ...$orderDetail.get() };
 
-  const editedMenu = copyOrders.menus.filter((cur, id) => {
+  const editedMenu = copyOrder.menus.filter((cur, id) => {
     return id !== index;
   });
-  copyOrders.menus = editedMenu;
+  copyOrder.menus = editedMenu;
 
-  addOrder(copyOrders);
+  addOrder(copyOrder);
+}
+
+export function updateMenu(
+  index: number,
+  editedTopping: { _id: string; name: string; price: number }[]
+) {
+  let copyOrder: OrderDetails = { ...$orderDetail.get() };
+
+  const editedMenu = copyOrder.menus.map((cur, id) => {
+    if (id === index) {
+      cur.selectedToppings = editedTopping;
+    }
+    return cur;
+  });
+
+  copyOrder.menus = editedMenu;
+  addOrder(copyOrder);
 }

@@ -30,7 +30,7 @@ const OrderList = () => {
         <div className="pt-5 pl-5">
           <h2 className="font-semibold">รายการอาหาร</h2>
           <p className="mb-4">เลขที่รายการอาหาร: {orders.orderNumber}</p>
-          <ul className="flex gap-3 flex-col">
+          <ul className="flex gap-3 flex-col overflow-auto h-[450px]">
             {orders.menus.map((item, index) => (
               <li
                 key={item._id + index}
@@ -45,7 +45,12 @@ const OrderList = () => {
                   ))}
                 </div>
                 <div className="flex gap-2">
-                  <button className="btn btn-warning">แก้ไข</button>
+                  <Link
+                    href={`/menu-details/${index}`}
+                    className="btn btn-warning"
+                  >
+                    แก้ไข
+                  </Link>
                   <button
                     className="btn btn-error"
                     onClick={() => removeMenu(index)}

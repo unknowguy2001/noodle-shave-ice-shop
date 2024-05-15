@@ -1,13 +1,14 @@
 "use client";
 import Image from "next/image";
 import { v4 } from "uuid";
-import { $orderDetail, addOrder } from "@/store/orderId";
-import { useRouter } from "next/navigation";
+import { $orderDetail, addOrder, updateMenu } from "@/store/orderId";
 import { FormEvent, useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $totalPrice, setTotalPrice } from "@/store/totalPrice";
+import { useRouter } from "next/navigation";
 
 const MenuDetails = ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
   const [menu, setMenu] = useState<{
     _id: string;
     name: string;
@@ -66,7 +67,7 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
     e.preventDefault();
     const today = new Date().toLocaleDateString();
     const uuid = v4();
-    const id = "/order/" + today.split("/").join() + uuid;
+    const id = today.split("/").join("") + uuid;
     const order = { ...oldOrder };
 
     const newOrder: OrderDetails = {
@@ -96,10 +97,33 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
           $totalPrice.get()
       );
     }
+    router.push("/");
     return;
   };
+  const handleUpdate = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    updateMenu(parseInt(params.id), toppingValues);
+
+    router.push("/order-list");
+  };
+
+  function hasEnglishCharacters(str: string): boolean {
+    return /[a-zA-Z]/.test(str);
+  }
 
   const fecthMenuDetail = async () => {
+    if (!hasEnglishCharacters(params.id)) {
+      const response = oldOrder.menus.find(
+        (value, index) => index == parseInt(params.id)
+      );
+      const fetchData = await fetch(`/api/menu/${response?._id}`);
+      const data = await fetchData.json();
+
+      setToppingValues(response?.selectedToppings!);
+
+      return data;
+    }
     const response = await fetch(`/api/menu/${params.id}`);
     const menuDetial = await response.json();
 
@@ -130,8 +154,10 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
           <form
-            className="grid grid-cols-1 gap-2 pt-4"
-            onSubmit={generateOrder}
+            className="grid grid-cols-1 gap-2 pt-4 "
+            onSubmit={
+              !hasEnglishCharacters(params.id) ? handleUpdate : generateOrder
+            }
           >
             {menu.toppings.map((e) => (
               <div

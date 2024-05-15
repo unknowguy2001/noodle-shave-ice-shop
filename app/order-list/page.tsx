@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useStore } from "@nanostores/react";
-import { $orderDetail } from "@/store/orderId";
+import { $orderDetail, removeMenu } from "@/store/orderId";
 
 const OrderList = () => {
   const orders = useStore($orderDetail);
@@ -44,8 +44,14 @@ const OrderList = () => {
                     </span>
                   ))}
                 </div>
-                <div>
+                <div className="flex gap-2">
                   <button className="btn btn-warning">แก้ไข</button>
+                  <button
+                    className="btn btn-error"
+                    onClick={() => removeMenu(index)}
+                  >
+                    นำออก
+                  </button>
                 </div>
               </li>
             ))}

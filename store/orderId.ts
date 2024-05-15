@@ -2,13 +2,12 @@ import { atom } from "nanostores";
 
 export type $orderDetailState = {};
 
-export const $orderDetail = atom<OrderValue>({
-  customerName: "",
+export const $orderDetail = atom<OrderDetails>({
   orderNumber: "",
   menus: [],
 });
 
-export function addOrder(order: OrderValue) {
+export function addOrder(order: OrderDetails) {
   $orderDetail.set(order);
   return;
 }

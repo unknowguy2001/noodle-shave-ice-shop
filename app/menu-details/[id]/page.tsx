@@ -81,15 +81,20 @@ const MenuDetails = ({ params }: { params: { id: string } }) => {
       ],
     };
 
-    for (let i = 0; i < toppingValues.length; i++) {}
-
     if (newOrder.menus.length > 0) {
       if (order.orderNumber == "") order.orderNumber = newOrder.orderNumber;
       order.menus.push(newOrder.menus[0]);
 
       addOrder(order);
 
-      setTotalPrice(newOrder.menus[0].price + $totalPrice.get());
+      setTotalPrice(
+        newOrder.menus[0].price +
+          newOrder.menus[0].selectedToppings.reduce(
+            (prev, cur) => prev + cur.price,
+            0
+          ) +
+          $totalPrice.get()
+      );
     }
     return;
   };

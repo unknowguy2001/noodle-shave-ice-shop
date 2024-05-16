@@ -6,10 +6,10 @@ export const orderSchema = z.object({
   menus: z
     .object({
       menu: z.string(),
-      toppings: z.object({ topping: z.string() }).array(),
+      toppings: z.object({ _id: z.string() }).array(),
     })
-    .array()
     .array(),
+  totalPrice: z.number(),
 });
 
 export type order = z.infer<typeof orderSchema>;

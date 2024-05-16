@@ -3,6 +3,7 @@ interface OrderValue {
   customerName: string;
   menus: Array<{
     menu: string;
-    toppings: Array<string>;
+    toppings: Array<{ _id: string }>;
   }>;
+  totalPrice: number;
 }

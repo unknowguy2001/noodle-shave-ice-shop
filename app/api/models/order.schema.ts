@@ -9,6 +9,8 @@ const orderSchema = new Schema({
       toppings: [{ type: Types.ObjectId, ref: "Topping" }],
     },
   ],
+  totalPrice: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Order = models.Order || mongoose.model("Order", orderSchema);

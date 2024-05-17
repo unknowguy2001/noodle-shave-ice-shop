@@ -1,4 +1,4 @@
-# Noodle and shave ice shop
+# Noodle and shave ice shop 🍜
 
 ## Table of content
 - About the app

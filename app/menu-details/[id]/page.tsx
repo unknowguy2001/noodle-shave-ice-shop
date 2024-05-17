@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
 import { v4 } from "uuid";
-import { $orderDetail, addOrder, updateMenu } from "@/store/orderId";
+import { $orderDetail, addOrder, updateMenu } from "@/store/orderDetail.store";
 import { FormEvent, useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
-import { $totalPrice, setTotalPrice } from "@/store/totalPrice";
+import { $totalPrice, setTotalPrice } from "@/store/totalPrice.store";
 import { useRouter } from "next/navigation";
 
 const MenuDetails = ({ params }: { params: { id: string } }) => {

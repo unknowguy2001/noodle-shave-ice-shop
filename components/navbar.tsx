@@ -4,8 +4,8 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
-import { $orderDetail } from "@/store/orderId";
-import { $totalPrice } from "@/store/totalPrice";
+import { $orderDetail } from "@/store/orderDetail.store";
+import { $totalPrice } from "@/store/totalPrice.store";
 
 const Navbar = () => {
   const orders = useStore($orderDetail);

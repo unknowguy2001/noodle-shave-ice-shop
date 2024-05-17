@@ -5,6 +5,11 @@
 - Screenshots
 - Technologies
 - Setup
+- 
+## About the app
+
+This project is inspired by a mini Thai noodle shop by my aunt, she has problems when taking orders she can't remember all orders, and it takes a lot of time to calculate the total price. Therefore, I will create this web application to solve those problems.
+
 ## Setup
 
 First, run the development server:

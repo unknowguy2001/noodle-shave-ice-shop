@@ -1,4 +1,5 @@
 interface OrderValue {
+  _id: string;
   orderNumber: string;
   customerName: string;
   menus: Array<{

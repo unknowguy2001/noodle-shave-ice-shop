@@ -110,3 +110,31 @@ export async function PATCH(
     );
   }
 }
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  await createConnection();
+
+  try {
+    const id = params.id;
+
+    const data = await Menu.findById(id);
+
+    if (!data) {
+      return NextResponse.json({ success: false }, { status: 404 });
+    }
+
+    const result = await Menu.deleteOne({ _id: id });
+
+    return NextResponse.json({ success: true, result }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: (error as Error).message,
+      },
+      { status: 500 }
+    );
+  }
+}

@@ -9,7 +9,7 @@ const adminManager = () => {
           เพิ่มท็อปปิ้ง
         </Link>
         <Link href="/admin/topping/edit" className="btn btn-warning btn-sm">
-          แก้ไขท็อปปิ้ง
+          จัดการท็อปปิ้ง
         </Link>
         <Link href="/admin/menu" className="btn btn-warning btn-sm">
           เพิ่มเมนู

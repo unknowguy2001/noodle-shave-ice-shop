@@ -1,8 +1,9 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const EditForm = ({
   props,
@@ -10,11 +11,30 @@ const EditForm = ({
   props: { items: ToppingValue[] | MenuValue[] };
 }) => {
   const path = usePathname();
+
   useEffect(() => {
     toast.warning(
       "คำเตือน: ก่อนทำการลบรายการท็อปปิ้งโปรดเช็คให้แน่ใจก่อนดำเนินการลบ!"
     );
   }, []);
+  const handleRemove = (id: string) => {
+    (async function () {
+      const deleteData = await fetch(
+        path == "/admin/menu/edit" ? `/api/menu/${id}` : `/api/topping/${id}`,
+        { method: "DELETE" }
+      );
+      const deletedResult = await deleteData.json();
+
+      if (deletedResult.success) {
+        toast.success("ดำเนินการลบเสร็จสิ้น");
+        props.items.filter((item) => {
+          return item._id != id;
+        });
+      } else {
+        toast.error("ไม่สามารถดำเนินการลบได้ กรุณาลองใหม่อีกครั้งในภายหลัง");
+      }
+    })();
+  };
   return (
     <div>
       <div className="flex justify-end">
@@ -55,7 +75,12 @@ const EditForm = ({
                 >
                   แก้ไข
                 </Link>
-                <button className="btn btn-error">ลบ</button>
+                <button
+                  className="btn btn-error"
+                  onClick={() => handleRemove(item._id)}
+                >
+                  ลบ
+                </button>
               </div>
             </li>
           </ul>

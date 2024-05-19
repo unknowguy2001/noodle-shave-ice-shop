@@ -123,7 +123,6 @@ const MenuForm = ({ id }: { id?: string }) => {
 
           if (response.success) {
             setMenu(response.response);
-            console.log(response.response);
           } else {
             toast.error("ไม่สามารถดึงข้อมูลเมนูที่คุณต้องการได้");
           }

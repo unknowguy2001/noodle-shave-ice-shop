@@ -30,7 +30,6 @@ export const POST = async (req: NextRequest) => {
     const icon = (body.file as File).name;
 
     if (file) {
-      console.log(file);
       const buffer = Buffer.from(await file.arrayBuffer());
 
       if (!fs.existsSync(UPLOAD_DIR)) {

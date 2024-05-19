@@ -41,7 +41,6 @@ export async function PATCH(
     const topping = await Topping.findById(id);
 
     if (!topping) {
-      console.log("test1");
       return NextResponse.json(
         { success: false, message: "Notfound!" },
         { status: 404 }

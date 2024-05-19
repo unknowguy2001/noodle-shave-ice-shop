@@ -40,7 +40,6 @@ export const AdminOrders = () => {
 
         const response = await data.json();
         if (response) {
-          console.log(response);
           setRecieveOrders(response);
         }
       })();

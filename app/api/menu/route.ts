@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     const description = body.description;
     const price = body.price;
     const toppings = JSON.parse(body.toppings as string);
-    console.log(file);
+
     if (file) {
       const buffer = Buffer.from(await file.arrayBuffer());
       if (!fs.existsSync(UPLOAD_DIR)) {

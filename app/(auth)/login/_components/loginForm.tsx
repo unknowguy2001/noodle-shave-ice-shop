@@ -40,7 +40,6 @@ export const LoginForm = () => {
 
     if (response.ok) {
       router.push("/admin/dashboard");
-      console.log("ok");
     }
   };
 

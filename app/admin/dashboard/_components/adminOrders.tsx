@@ -57,6 +57,11 @@ export const AdminOrders = () => {
   const handleOrder = (val: string, _id: string, type: string) => {
     const copyRecieveOrders: OrderValue[] = [...recieveOrders!];
 
+    if (type != "correct") {
+      if (!confirm("คุณต้องการนำออเดอร์นี้ออกหรือไม่")) {
+        return;
+      }
+    }
     (async function () {
       const rawResponse = await fetch(`/api/order-list/${_id}`, {
         method: type == "correct" ? "PATCH" : "DELETE",
@@ -87,7 +92,7 @@ export const AdminOrders = () => {
   };
   return (
     <>
-      <div className="flex flex-col border gap-2 mt-4 mx-2 px-2 py-3 rounded h-[60%] ">
+      <div className="flex flex-col border gap-2 mt-4 mx-2 px-2 py-3 rounded h-3/4 ">
         <h2>รายการอาหารของลูกค้า</h2>
         {recieveOrders?.map((item) => (
           <div
@@ -101,7 +106,14 @@ export const AdminOrders = () => {
               </span>
             </div>
             <div className="flex gap-3 overflow-hidden items-center">
-              <button className="btn btn-xs btn-info sm:btn-sm md:btn-md lg:btn-lg">
+              <button
+                className="btn"
+                onClick={() =>
+                  (document.getElementById(
+                    "my_modal_1"
+                  ) as HTMLFormElement)!.showModal()
+                }
+              >
                 ดูรายละเอียด
               </button>
               <button
@@ -150,6 +162,30 @@ export const AdminOrders = () => {
             </div>
           </div>
         ))}
+
+        <dialog id="my_modal_1" className="modal">
+          {recieveOrders?.map((order, index) => (
+            <div className="modal-box" key={order._id + index}>
+              <h3 className="font-bold text-lg"></h3>
+              {order.menus.map((menu, index) => (
+                <div key={index}>
+                  <h3 className="mb-1 font-bold">{menu.menu.name}</h3>
+                  <ul className="border mt-4 rounded p-2">
+                    {menu.toppings.map((topping) => (
+                      <li key={topping._id}>{topping.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <p className="mt-2">ราคารวม: {order.totalPrice} ฿</p>
+              <div className="modal-action">
+                <form method="dialog">
+                  <button className="btn">Close</button>
+                </form>
+              </div>
+            </div>
+          ))}
+        </dialog>
       </div>
     </>
   );

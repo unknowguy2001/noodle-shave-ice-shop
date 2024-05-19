@@ -121,6 +121,8 @@ export async function DELETE(
       return NextResponse.json({ success: false }, { status: 404 });
     }
 
+    fs.unlinkSync(path.resolve(UPLOAD_DIR, data.icon));
+
     const result = await Topping.deleteOne({ _id: id });
 
     return NextResponse.json({ success: true, result }, { status: 200 });

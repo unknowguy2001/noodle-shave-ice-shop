@@ -125,6 +125,8 @@ export async function DELETE(
       return NextResponse.json({ success: false }, { status: 404 });
     }
 
+    fs.unlinkSync(path.resolve(UPLOAD_DIR, data.image));
+
     const result = await Menu.deleteOne({ _id: id });
 
     return NextResponse.json({ success: true, result }, { status: 200 });

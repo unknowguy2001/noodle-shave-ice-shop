@@ -11,6 +11,11 @@ const adminMenu = () => {
       <div className="flex flex-col items-center gap-4 mt-4">
         <MenuForm></MenuForm>
       </div>
+      <div className="flex justify-end">
+        <Link href="/admin/manager" className="btn btn-error">
+          ย้อนกลับ
+        </Link>
+      </div>
     </>
   );
 };

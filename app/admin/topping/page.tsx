@@ -12,8 +12,8 @@ const Topping = () => {
         <ToppingForm></ToppingForm>
       </div>
       <div className="flex justify-end">
-        <Link href="/topping/edit" className="btn btn-warning">
-          แก้ไขท็อปปิ้ง
+        <Link href="/admin/manager" className="btn btn-error">
+          ย้อนกลับ
         </Link>
       </div>
     </>

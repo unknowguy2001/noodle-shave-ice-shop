@@ -1,7 +1,8 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
+import { toast } from "sonner";
 
 const EditForm = ({
   props,
@@ -9,6 +10,11 @@ const EditForm = ({
   props: { items: ToppingValue[] | MenuValue[] };
 }) => {
   const path = usePathname();
+  useEffect(() => {
+    toast.warning(
+      "คำเตือน: ก่อนทำการลบรายการท็อปปิ้งโปรดเช็คให้แน่ใจก่อนดำเนินการลบ!"
+    );
+  }, []);
   return (
     <div>
       <div className="flex justify-end">
